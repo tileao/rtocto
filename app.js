@@ -32,8 +32,8 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V58 • Figure 4-96 engine enabled';
-const BUILD_CACHE_KEY = 'v58';
+const BUILD_LABEL = 'BUILD V59 • Figure 4-96 center scale + X alignment fix';
+const BUILD_CACHE_KEY = 'v59';
 
 const state = {
   engine: null,

@@ -59,3 +59,8 @@ Build v23: IBF center panel scale corrected to 0–20 m full-width on Figure 4-6
 
 ## V58
 - Enabled Figure 4-96 engine for EAPS ON above 6800 kg.
+
+
+## V59
+- Corrige a escala geométrica do painel central da Figure 4-96 para 0–20 [m x100].
+- Recalibra o alinhamento X dos painéis central e direito da Figure 4-96 (~1.8 px à esquerda).
