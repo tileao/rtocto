@@ -32,8 +32,8 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V53 • Figure 4-94 left-panel semantic relabel';
-const BUILD_CACHE_KEY = 'v50';
+const BUILD_LABEL = 'BUILD V57 • Figure 4-96 reference mode staged';
+const BUILD_CACHE_KEY = 'v57';
 
 const state = {
   engine: null,
@@ -80,6 +80,10 @@ function resolveEffectiveProfileKey(profileKey, weightKg = parseUnsignedField(we
     if (Number.isFinite(weightKg) && weightKg > 6800) return 'eapsOff7000';
     return 'eapsOff';
   }
+  if (profileKey === 'eapsOn') {
+    if (Number.isFinite(weightKg) && weightKg > 6800) return 'eapsOn7000';
+    return 'eapsOn';
+  }
   return profileKey;
 }
 
@@ -95,7 +99,7 @@ async function ensureEffectiveProfileLoaded({ preserveInputs = true, autoRun = f
 }
 
 async function refreshWeightSensitiveProfileIfNeeded() {
-  if (!['standard', 'eapsOff'].includes(state.profileKey)) return;
+  if (!['standard', 'eapsOff', 'eapsOn'].includes(state.profileKey)) return;
   const digits = digitsOnlyLength(weightEl);
   if (digits < 4) return;
   const desiredProfileKey = resolveEffectiveProfileKey(state.profileKey, parseUnsignedField(weightEl));
@@ -123,6 +127,11 @@ const profiles = {
     label: 'EAPS ON',
     json: 'data/figure_4_58_engine_data.json',
     image: 'docs/page_s50_93_figure_4_58.png',
+  },
+  eapsOn7000: {
+    label: '7000 EAPS ON',
+    json: 'data/figure_4_96_reference.json',
+    image: 'docs/page_s90_131_figure_4_96.png',
   },
   ibfInstalled: {
     label: 'IBF Installed',
@@ -805,10 +814,13 @@ function showSuccess(result) {
 function showReferencePending() {
   state.currentResult = null;
   setMetricsEmpty();
-  interpBox.innerHTML = 'Visualização da Figure 4-94 pronta para auditoria. A engine deste perfil ainda está sendo reconstruída do zero, sem reaproveitar a preview antiga.';
-  setStatus('neutral', 'REFERÊNCIA', 'Engine 4-94 pendente', 'Visualização correta carregada.', 'Cálculo temporariamente desabilitado para EAPS OFF acima de 6800 kg.');
+  const src = state.engine?.source || {};
+  const confLabel = getSelectedConfigurationLabel();
+  interpBox.innerHTML = `Visualização da Figure ${src.figure || '—'} pronta para auditoria. A engine deste perfil ainda está sendo reconstruída do zero.`;
+  setStatus('neutral', 'REFERÊNCIA', `Engine Figure ${src.figure || '—'} pendente`, 'Visualização correta carregada.', `Cálculo temporariamente desabilitado para ${confLabel} acima de 6800 kg.`);
   drawOverlay(null);
 }
+
 
 function showError(message, kind = 'warn') {
   setMetricsEmpty();
@@ -913,20 +925,23 @@ function updateProfileTexts() {
   const eapsOffRule = state.profileKey === 'eapsOff'
     ? ' No EAPS OFF: até 6800 kg usa Supplement 50; acima de 6800 kg usa a Figure 4-94 do Supplement 90.'
     : '';
+  const eapsOnRule = state.profileKey === 'eapsOn'
+    ? ' No EAPS ON: até 6800 kg usa Supplement 50; acima de 6800 kg usa a Figure 4-96 do Supplement 90.'
+    : '';
   const formHint = document.getElementById('formHint');
   if (formHint) {
     if (isReferenceOnlyEngine()) {
-      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Visualização correta pronta; engine ainda em reconstrução.${standardRule}${eapsOffRule}`;
+      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Visualização correta pronta; engine ainda em reconstrução.${standardRule}${eapsOffRule}${eapsOnRule}`;
     } else {
       const paRange = state.engine.panels.left.pressure_altitude_ft;
-      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Faixa de PA = ${fmt(paRange.min, 0)} a ${fmt(paRange.max, 0)} ft.${standardRule}${eapsOffRule}`;
+      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Faixa de PA = ${fmt(paRange.min, 0)} a ${fmt(paRange.max, 0)} ft.${standardRule}${eapsOffRule}${eapsOnRule}`;
     }
   }
   chartReference.innerHTML = `<strong>Gráfico em uso:</strong> Figure ${src.figure} — ${src.title}.<br><strong>Suplemento:</strong> Supplement ${src.supplement}<br><strong>Página:</strong> ${src.page}<br><strong>Fonte:</strong> ${src.rfm_source}.`;
   const chartHint = document.getElementById('chartHint');
   if (chartHint) {
     chartHint.textContent = isReferenceOnlyEngine()
-      ? 'Página correta da Figure 4-94 carregada como referência limpa. O cálculo deste perfil ainda não foi religado.'
+      ? `Página correta da Figure ${src.figure} carregada como referência limpa. O cálculo deste perfil ainda não foi religado.`
       : 'Overlay direto sobre a página completa do RFM: altitude, curvas usadas no cálculo, transferência horizontal, leitura da distância e correção por headwind.';
   }
 }
