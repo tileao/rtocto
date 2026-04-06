@@ -32,7 +32,7 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V50 • EAPS OFF 7000 clean 4-94 engine rebuilt';
+const BUILD_LABEL = 'BUILD V53 • Figure 4-94 left-panel semantic relabel';
 const BUILD_CACHE_KEY = 'v50';
 
 const state = {
