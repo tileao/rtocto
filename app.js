@@ -32,8 +32,8 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V57 • Figure 4-96 reference mode staged';
-const BUILD_CACHE_KEY = 'v57';
+const BUILD_LABEL = 'BUILD V58 • Figure 4-96 engine enabled';
+const BUILD_CACHE_KEY = 'v58';
 
 const state = {
   engine: null,
@@ -130,7 +130,7 @@ const profiles = {
   },
   eapsOn7000: {
     label: '7000 EAPS ON',
-    json: 'data/figure_4_96_reference.json',
+    json: 'data/figure_4_96_engine_data.json',
     image: 'docs/page_s90_131_figure_4_96.png',
   },
   ibfInstalled: {

@@ -55,3 +55,7 @@ Build v23: IBF center panel scale corrected to 0–20 m full-width on Figure 4-6
 - Base restored from V39.
 - Figure 4-94 (S90-127) assets staged only as clean references.
 - No 4-94 engine or autoswitch wiring is active in this build.
+
+
+## V58
+- Enabled Figure 4-96 engine for EAPS ON above 6800 kg.
