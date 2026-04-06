@@ -32,8 +32,8 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V59 • Figure 4-96 center scale + X alignment fix';
-const BUILD_CACHE_KEY = 'v59';
+const BUILD_LABEL = 'BUILD V64 • IBF 7000 engine enabled';
+const BUILD_CACHE_KEY = 'v63';
 
 const state = {
   engine: null,
@@ -84,6 +84,10 @@ function resolveEffectiveProfileKey(profileKey, weightKg = parseUnsignedField(we
     if (Number.isFinite(weightKg) && weightKg > 6800) return 'eapsOn7000';
     return 'eapsOn';
   }
+  if (profileKey === 'ibfInstalled') {
+    if (Number.isFinite(weightKg) && weightKg > 6800) return 'ibfInstalled7000';
+    return 'ibfInstalled';
+  }
   return profileKey;
 }
 
@@ -99,7 +103,7 @@ async function ensureEffectiveProfileLoaded({ preserveInputs = true, autoRun = f
 }
 
 async function refreshWeightSensitiveProfileIfNeeded() {
-  if (!['standard', 'eapsOff', 'eapsOn'].includes(state.profileKey)) return;
+  if (!['standard', 'eapsOff', 'eapsOn', 'ibfInstalled'].includes(state.profileKey)) return;
   const digits = digitsOnlyLength(weightEl);
   if (digits < 4) return;
   const desiredProfileKey = resolveEffectiveProfileKey(state.profileKey, parseUnsignedField(weightEl));
@@ -137,6 +141,11 @@ const profiles = {
     label: 'IBF Installed',
     json: 'data/figure_4_68a_engine_data.json',
     image: 'docs/page_s50_108a_figure_4_68a.png',
+  },
+  ibfInstalled7000: {
+    label: '7000 IBF Installed',
+    json: 'data/figure_4_98_engine_data.json',
+    image: 'docs/page_s90_135_figure_4_98.png',
   },
   standard7000: {
     label: '7000 Standard',
@@ -928,13 +937,16 @@ function updateProfileTexts() {
   const eapsOnRule = state.profileKey === 'eapsOn'
     ? ' No EAPS ON: até 6800 kg usa Supplement 50; acima de 6800 kg usa a Figure 4-96 do Supplement 90.'
     : '';
+  const ibfRule = state.profileKey === 'ibfInstalled'
+    ? ' No IBF Installed: até 6800 kg usa Supplement 50; acima de 6800 kg usa a Figure 4-98 do Supplement 90.'
+    : '';
   const formHint = document.getElementById('formHint');
   if (formHint) {
     if (isReferenceOnlyEngine()) {
-      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Visualização correta pronta; engine ainda em reconstrução.${standardRule}${eapsOffRule}${eapsOnRule}`;
+      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Visualização correta pronta; engine ainda em reconstrução.${standardRule}${eapsOffRule}${eapsOnRule}${ibfRule}`;
     } else {
       const paRange = state.engine.panels.left.pressure_altitude_ft;
-      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Faixa de PA = ${fmt(paRange.min, 0)} a ${fmt(paRange.max, 0)} ft.${standardRule}${eapsOffRule}${eapsOnRule}`;
+      formHint.textContent = `Escopo atual: Supplement ${src.supplement}, Figure ${src.figure}, ${confLabel}. Faixa de PA = ${fmt(paRange.min, 0)} a ${fmt(paRange.max, 0)} ft.${standardRule}${eapsOffRule}${eapsOnRule}${ibfRule}`;
     }
   }
   chartReference.innerHTML = `<strong>Gráfico em uso:</strong> Figure ${src.figure} — ${src.title}.<br><strong>Suplemento:</strong> Supplement ${src.supplement}<br><strong>Página:</strong> ${src.page}<br><strong>Fonte:</strong> ${src.rfm_source}.`;
