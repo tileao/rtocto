@@ -32,8 +32,8 @@ const interpBox = document.getElementById('interpBox');
 
 const BASE_PAGE_WIDTH = 842;
 const BASE_PAGE_HEIGHT = 595;
-const BUILD_LABEL = 'BUILD V64 • IBF 7000 engine enabled';
-const BUILD_CACHE_KEY = 'v63';
+const BUILD_LABEL = 'BUILD V65 • IBF 7000 left OAT fine alignment';
+const BUILD_CACHE_KEY = 'v65';
 
 const state = {
   engine: null,
